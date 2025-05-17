@@ -22,7 +22,7 @@ A native Android application designed to help nurses and healthcare professional
 *   **Input/Output (I&O) Charting:**
     *   Record and track patient input and output volumes.
 
-## Technology Stack
+## Tech Stack
 
 *   **Language:** Kotlin
 *   **UI:** Jetpack Compose
