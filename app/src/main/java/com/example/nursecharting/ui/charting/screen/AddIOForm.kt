@@ -1,0 +1,129 @@
+package com.example.nursecharting.ui.charting.screen
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.nursecharting.data.local.entity.InputOutputEntry
+import com.example.nursecharting.ui.charting.ChartingViewModel
+import kotlinx.coroutines.flow.collectLatest
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddIOForm(
+    navController: NavController,
+    patientId: String, // Changed to String
+    viewModel: ChartingViewModel = hiltViewModel()
+) {
+    // var ioType by remember { mutableStateOf("Input") } // "Input" or "Output" - Not in entity
+    var typeFieldValue by remember { mutableStateOf("") } // For the "type" field in entity e.g., "Oral", "IVF", "Urine", "Emesis"
+    var volumeValue by remember { mutableStateOf("") } // For "volume" field, will be parsed to Double
+    // var description by remember { mutableStateOf("") } // Optional further details - Not in entity
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // val ioTypes = listOf("Input", "Output") // This was for the local ioType state
+    // var expandedTypeDropdown by remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(Unit) {
+        viewModel.saveResult.collectLatest { success ->
+            if (success) {
+                navController.popBackStack()
+            } else {
+                errorMessage = "Failed to save I/O entry. Please try again."
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Add Input/Output Entry") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // The "ioType" (Input/Output) dropdown is removed as it's not directly in the entity.
+            // The "type" field in the entity is for specifics like "Oral", "Urine".
+            // If "Input" vs "Output" is crucial, it might need to be part of the "type" string,
+            // or the entity needs a dedicated field.
+
+            OutlinedTextField(
+                value = typeFieldValue,
+                onValueChange = { typeFieldValue = it },
+                label = { Text("Type (e.g., Oral Intake, IV Fluids, Urine Output)") },
+                modifier = Modifier.fillMaxWidth(),
+                 isError = errorMessage != null && typeFieldValue.isBlank()
+            )
+            OutlinedTextField(
+                value = volumeValue,
+                onValueChange = { volumeValue = it },
+                label = { Text("Volume (mL)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                isError = errorMessage != null && volumeValue.isBlank()
+            )
+            // Description field removed as it's not in the InputOutputEntry entity
+            // OutlinedTextField(
+            //     value = description,
+            //     onValueChange = { description = it },
+            //     label = { Text("Description (Optional)") },
+            //     modifier = Modifier.fillMaxWidth(),
+            //     singleLine = false
+            // )
+
+            errorMessage?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = {
+                    val volumeDouble = volumeValue.toDoubleOrNull()
+                    if (typeFieldValue.isBlank() || volumeDouble == null) {
+                        errorMessage = "Please fill in Type and a valid Volume."
+                        return@Button
+                    }
+                    if (patientId.isEmpty() || patientId.lowercase() == "null") {
+                        errorMessage = "Invalid Patient ID."
+                        return@Button
+                    }
+                    errorMessage = null
+
+                    val ioEntry = InputOutputEntry(
+                        // id is autoGenerated by Room, so not set here
+                        patientId = patientId,
+                        timestamp = System.currentTimeMillis(),
+                        type = typeFieldValue, // Specific type like "Oral", "Urine"
+                        volume = volumeDouble // volume is Double in entity
+                        // ioType and description are removed as they are not in the entity
+                    )
+                    viewModel.addIOEntry(ioEntry)
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Save I/O Entry")
+            }
+        }
+    }
+}

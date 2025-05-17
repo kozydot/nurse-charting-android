@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Remove the following exclude if you want to back up device-protected storage files. -->
+    <exclude domain="root" path="."/>
+    <!-- Example of how to exclude a file from backup:
+    <exclude domain="sharedpref" path="app_specific_prefs.xml"/>
+    -->
+</full-backup-content>

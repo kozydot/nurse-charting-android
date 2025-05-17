@@ -1,0 +1,50 @@
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.hprof
+local.properties
+.gradle/
+captures/
+build/
+
+# User-specified
+memory-bank/
+docs/
+
+# Other common Android/Java ignores
+*.class
+*.jar
+*.war
+*.ear
+*.apk
+*.ap_
+*.aab
+*.dex
+gen/
+bin/
+out/
+target/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Log files
+*.log
+
+# Crashlytics
+com_crashlytics_export_strings.xml
+
+# Google Services
+google-services.json
+
+# KSP (Kotlin Symbol Processing)
+app/build/generated/ksp/
+app/build/kspCaches/
+
+# VSCode specific
+.vscode/
+.VSCodeCounter/
+
+# Roo specific
+.roomodes
