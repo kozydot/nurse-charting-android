@@ -24,12 +24,10 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import com.example.nursecharting.ui.charting.TaskSortOption
 import com.example.nursecharting.ui.charting.TaskFilterStatus
-import com.example.nursecharting.ui.charting.TaskStatusValue
 
 @HiltViewModel
 class ChartingViewModel @Inject constructor(
     private val chartingRepository: ChartingRepository,
-    private val savedStateHandle: SavedStateHandle,
     private val application: Application // Inject Application context
 ) : ViewModel() {
 
@@ -42,7 +40,7 @@ class ChartingViewModel @Inject constructor(
     private val _saveResult = MutableSharedFlow<Boolean>()
     val saveResult: SharedFlow<Boolean> = _saveResult.asSharedFlow()
 // Expose the full list of filter options for the UI
-    private lateinit var _taskFilterOptions: MutableStateFlow<List<TaskFilterStatus>>
+    private val _taskFilterOptions: MutableStateFlow<List<TaskFilterStatus>>
     val taskFilterOptions: StateFlow<List<TaskFilterStatus>> get() = _taskFilterOptions
 
     init {
@@ -50,24 +48,20 @@ class ChartingViewModel @Inject constructor(
         val sourceOptions = TaskFilterStatus.allOptions
         Log.d("ChartingViewModel", "Source TaskFilterStatus.allOptions (size ${sourceOptions.size}):")
         sourceOptions.forEachIndexed { index, item ->
-            val itemClass = item?.javaClass?.name ?: "null"
-            Log.d("ChartingViewModel", "  Source item $index: ${item?.displayName ?: "NULL_SOURCE_ITEM"}, Class: $itemClass, Identity: ${System.identityHashCode(item)}")
+            val itemClass = item.javaClass.name
+            Log.d("ChartingViewModel", "  Source item $index: ${item.displayName}, Class: $itemClass, Identity: ${System.identityHashCode(item)}")
             if (item == TaskFilterStatus.ALL) {
                 Log.d("ChartingViewModel", "    Source item $index IS TaskFilterStatus.ALL. Identity of TaskFilterStatus.ALL: ${System.identityHashCode(TaskFilterStatus.ALL)}")
-            } else if (item == null) {
-                Log.e("ChartingViewModel", "    Source item $index IS NULL!")
             }
         }
 
         _taskFilterOptions = MutableStateFlow(sourceOptions.toList()) // Defensive copy
         Log.d("ChartingViewModel", "Initializing ChartingViewModel. _taskFilterOptions assigned.")
-        Log.d("ChartingViewModel", "Initial _taskFilterOptions.value (size ${_taskFilterOptions.value.size}): ${_taskFilterOptions.value.joinToString { it?.displayName ?: "NULL_ITEM_IN_LIST" }}")
+        Log.d("ChartingViewModel", "Initial _taskFilterOptions.value (size ${_taskFilterOptions.value.size}): ${_taskFilterOptions.value.joinToString { it.displayName }}")
         _taskFilterOptions.value.forEachIndexed { index, item ->
-            val itemClass = item?.javaClass?.name ?: "null"
-            Log.d("ChartingViewModel", "  ViewModel item $index: ${item?.displayName ?: "NULL_VM_ITEM"}, Class: $itemClass, Identity: ${System.identityHashCode(item)}")
-            if (item == null) {
-                Log.e("ChartingViewModel", "    NULL item found in _taskFilterOptions.value at index $index during init!")
-            } else if (item == TaskFilterStatus.ALL) {
+            val itemClass = item.javaClass.name
+            Log.d("ChartingViewModel", "  ViewModel item $index: ${item.displayName}, Class: $itemClass, Identity: ${System.identityHashCode(item)}")
+            if (item == TaskFilterStatus.ALL) {
                 Log.d("ChartingViewModel", "    ViewModel item $index IS TaskFilterStatus.ALL. Identity of TaskFilterStatus.ALL: ${System.identityHashCode(TaskFilterStatus.ALL)}")
             }
         }
@@ -191,7 +185,7 @@ class ChartingViewModel @Inject constructor(
             Log.d("ChartingViewModel", "addVitalSign viewModelScope.launch STARTED for patientId: ${vitalSignToAdd.patientId}")
             Log.d("ChartingViewModel", "Current _internalPatientId in ViewModel (inside launch): $currentVmPatientId")
             try {
-                if (!vitalSignToAdd.patientId.isNullOrBlank() && vitalSignToAdd.timestamp > 0) {
+                if (!vitalSignToAdd.patientId.isBlank() && vitalSignToAdd.timestamp > 0) {
                     if (vitalSignToAdd.patientId != currentVmPatientId) {
                         Log.w("ChartingViewModel", "Mismatch between vitalSignToAdd.patientId (${vitalSignToAdd.patientId}) and ViewModel's currentVmPatientId ($currentVmPatientId). Proceeding with vitalSignToAdd.patientId.")
                     }
@@ -233,7 +227,7 @@ class ChartingViewModel @Inject constructor(
         val currentVmPatientId = _internalPatientId.value
         viewModelScope.launch {
             try {
-                if (!medication.patientId.isNullOrBlank() && medication.timestamp > 0 && medication.medicationName.isNotBlank()) {
+                if (!medication.patientId.isBlank() && medication.timestamp > 0 && medication.medicationName.isNotBlank()) {
                     if (medication.patientId != currentVmPatientId) {
                         Log.w("ChartingViewModel", "Mismatch during addMedication for patientId. Med: ${medication.patientId}, VM _internalPatientId: $currentVmPatientId. Proceeding with Med's patientId.")
                     }
@@ -243,6 +237,7 @@ class ChartingViewModel @Inject constructor(
                     _saveResult.emit(false)
                 }
             } catch (e: Exception) {
+                Log.e("ChartingViewModel", "Error saving medication: $medication", e)
                 _saveResult.emit(false)
             }
         }
@@ -263,7 +258,7 @@ class ChartingViewModel @Inject constructor(
         val currentVmPatientId = _internalPatientId.value
         viewModelScope.launch {
             try {
-                if (!nurseNote.patientId.isNullOrBlank() && nurseNote.timestamp > 0 && nurseNote.noteText.isNotBlank()) {
+                if (!nurseNote.patientId.isBlank() && nurseNote.timestamp > 0 && nurseNote.noteText.isNotBlank()) {
                      if (nurseNote.patientId != currentVmPatientId) {
                         Log.w("ChartingViewModel", "Mismatch during addNurseNote for patientId. Note: ${nurseNote.patientId}, VM _internalPatientId: $currentVmPatientId. Proceeding with Note's patientId.")
                     }
@@ -273,6 +268,7 @@ class ChartingViewModel @Inject constructor(
                     _saveResult.emit(false)
                 }
             } catch (e: Exception) {
+                Log.e("ChartingViewModel", "Error saving nurse note: $nurseNote", e)
                 _saveResult.emit(false)
             }
         }
@@ -304,7 +300,7 @@ class ChartingViewModel @Inject constructor(
         val currentVmPatientId = _internalPatientId.value
         viewModelScope.launch {
             try {
-                if (!entry.patientId.isNullOrBlank() && entry.timestamp > 0 && entry.type.isNotBlank()) {
+                if (!entry.patientId.isBlank() && entry.timestamp > 0 && entry.type.isNotBlank()) {
                     if (entry.patientId != currentVmPatientId) {
                         Log.w("ChartingViewModel", "Mismatch during addIOEntry for patientId. Entry: ${entry.patientId}, VM _internalPatientId: $currentVmPatientId. Proceeding with Entry's patientId.")
                     }
@@ -314,6 +310,7 @@ class ChartingViewModel @Inject constructor(
                     _saveResult.emit(false)
                 }
             } catch (e: Exception) {
+                Log.e("ChartingViewModel", "Error saving I/O entry: $entry", e)
                 _saveResult.emit(false)
             }
         }
@@ -419,6 +416,7 @@ class ChartingViewModel @Inject constructor(
         }
     }
 
+    @Suppress("UNUSED_FUNCTION") // TODO: Implement UI for task deletion or remove if not planned for future use.
     fun deleteTask(task: Task) {
         viewModelScope.launch {
             try {
