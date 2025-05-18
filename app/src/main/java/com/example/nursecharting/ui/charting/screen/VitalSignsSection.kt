@@ -110,7 +110,7 @@ fun VitalSignHistoryCard(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     VitalSignDisplayItem("HR", "${vitalSignEntry.heartRate} bpm")
-                    VitalSignDisplayItem("Temp", "${vitalSignEntry.temperature}°${vitalSignEntry.temperatureUnit}")
+                    VitalSignDisplayItem("Temp", "${vitalSignEntry.temperature}${vitalSignEntry.temperatureUnit}")
                     vitalSignEntry.painScore?.takeIf { it.isNotBlank() }?.let {
                         VitalSignDisplayItem("Pain", it)
                     }
