@@ -75,7 +75,7 @@ fun PatientListScreen(
                 PatientListItem(
                     patient = patient,
                     onItemClick = {
-                        navController.navigate(Screen.PatientDetail.createRoute(patient.patientId))
+                        navController.navigate(Screen.PatientChartingHostScreen.createRoute(patient.patientId))
                     },
                     onDeleteClick = {
                         viewModel.deletePatient(patient) // Assuming a delete function in ViewModel

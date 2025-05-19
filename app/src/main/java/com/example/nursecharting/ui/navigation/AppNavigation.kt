@@ -104,7 +104,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val patientId = backStackEntry.arguments?.getString("patientId")
             patientId?.let {
-                PatientChartingHostScreen(patientId = it) // mainNavController removed
+                PatientChartingHostScreen(mainNavController = navController, patientId = it)
             }
         }
 

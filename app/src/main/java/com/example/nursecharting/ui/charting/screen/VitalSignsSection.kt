@@ -88,7 +88,7 @@ fun VitalSignHistoryCard(
             ) {
                 Text(
                     text = "Recorded: ${vitalSignEntry.timestamp.toFormattedString()}",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelSmall, // Corrected: caption -> labelSmall
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 IconButton(onClick = onDelete) {
@@ -99,38 +99,54 @@ fun VitalSignHistoryCard(
                     )
                 }
             }
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // Adjusted padding
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Column(modifier = Modifier.weight(1f)) {
-                    VitalSignDisplayItem("BP", "${vitalSignEntry.systolicBP}/${vitalSignEntry.diastolicBP} mmHg")
-                    VitalSignDisplayItem("RR", "${vitalSignEntry.respiratoryRate} breaths/min")
-                    VitalSignDisplayItem("SpO2", "${vitalSignEntry.spO2}%")
+            // Row for the two columns of vital signs
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top // As per Artisan's proposal
+            ) {
+                // Column 1: BP, RR, SpO2
+                Column(
+                    horizontalAlignment = Alignment.Start // As per Artisan's proposal
+                ) {
+                    VitalSignItem("BP", "${vitalSignEntry.systolicBP}/${vitalSignEntry.diastolicBP} mmHg")
+                    Spacer(modifier = Modifier.height(8.dp)) // Space between vital sign entries
+                    VitalSignItem("RR", "${vitalSignEntry.respiratoryRate} breaths/min")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    VitalSignItem("SpO2", "${vitalSignEntry.spO2}%")
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    VitalSignDisplayItem("HR", "${vitalSignEntry.heartRate} bpm")
-                    VitalSignDisplayItem("Temp", "${vitalSignEntry.temperature}${vitalSignEntry.temperatureUnit}")
+
+                Spacer(modifier = Modifier.width(16.dp)) // Space between the two columns
+
+                // Column 2: HR, Temp, Pain
+                Column(
+                    horizontalAlignment = Alignment.Start // As per Artisan's proposal
+                ) {
+                    VitalSignItem("HR", "${vitalSignEntry.heartRate} bpm")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    VitalSignItem("Temp", "${vitalSignEntry.temperature}${vitalSignEntry.temperatureUnit}")
+                    Spacer(modifier = Modifier.height(8.dp))
                     vitalSignEntry.painScore?.takeIf { it.isNotBlank() }?.let {
-                        VitalSignDisplayItem("Pain", it)
-                    }
+                        VitalSignItem("Pain", it)
+                    } ?: VitalSignItem("Pain", "N/A") // Show N/A if pain score is null or blank
                 }
             }
         }
     }
 }
 
+// Helper composable for individual vital sign item as per Artisan's proposal
 @Composable
-fun ColumnScope.VitalSignDisplayItem(label: String, value: String) {
-    Column(modifier = Modifier.padding(bottom = 4.dp)) {
+fun VitalSignItem(label: String, value: String) {
+    Column(horizontalAlignment = Alignment.Start) { // Ensures text inside is left-aligned
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            color = DarkGrey
+            style = MaterialTheme.typography.labelSmall // Corrected: overline -> labelSmall
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge   // Corrected: body1 -> bodyLarge
         )
     }
 }

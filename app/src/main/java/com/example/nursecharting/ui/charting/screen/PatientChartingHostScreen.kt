@@ -1,36 +1,59 @@
 package com.example.nursecharting.ui.charting.screen
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.nursecharting.ui.charting.ChartingViewModel
+import com.example.nursecharting.data.local.entity.Patient
+// import com.example.nursecharting.ui.charting.ChartingViewModel // Keep if used for other charting logic
+import com.example.nursecharting.ui.charting.component.PersistentPatientHeader
 import com.example.nursecharting.ui.navigation.AppBottomNavigationBar
 import com.example.nursecharting.ui.navigation.Screen
 import com.example.nursecharting.ui.navigation.getBottomNavigationItems
+import com.example.nursecharting.ui.patient.PatientDetailViewModel
 
 @Composable
 fun PatientChartingHostScreen(
-    // mainNavController: NavHostController, // The NavController from AppNavigation - Removed as unused
+    mainNavController: NavHostController, // The NavController from AppNavigation
     patientId: String
 ) {
     val chartingNavController = rememberNavController() // NavController for the inner NavHost
     val navigationItems = getBottomNavigationItems()
+    val patientDetailViewModel: PatientDetailViewModel = hiltViewModel()
+    val patientState by patientDetailViewModel.patient.collectAsStateWithLifecycle()
+
+    LaunchedEffect(patientId) {
+        patientDetailViewModel.loadPatient(patientId)
+    }
 
     // Observe current route for bottom bar selection state
     val navBackStackEntry by chartingNavController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
+        topBar = {
+            PersistentPatientHeader(
+                patient = patientState,
+                onEditClick = {
+                    // Ensure patientId is not null or empty before navigating
+                    if (patientId.isNotBlank()) {
+                        mainNavController.navigate(Screen.AddEditPatient.createRoute(patientId))
+                    }
+                }
+            )
+        },
         bottomBar = {
             AppBottomNavigationBar(
                 items = navigationItems,
