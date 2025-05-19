@@ -98,7 +98,7 @@ fun AddMedicationModal(
                                 return@Button
                             }
                             if (patientId.isEmpty() || patientId.lowercase() == "null") {
-                                errorMessage = "Invalid Patient ID." // Should not happen if patientId is correctly passed
+                                errorMessage = "Invalid Patient ID."
                                 return@Button
                             }
                             errorMessage = null
