@@ -7,14 +7,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width // Added import
-import androidx.compose.foundation.layout.heightIn // Added import
-import androidx.compose.foundation.layout.size // Added import
-import androidx.compose.foundation.layout.widthIn // Added import
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions // Added import
-import androidx.compose.foundation.shape.RoundedCornerShape // Added import
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -39,28 +39,26 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.nursecharting.data.local.entity.NurseNote
-import com.example.nursecharting.ui.theme.Teal // To be added in Color.kt
-import com.example.nursecharting.utils.toFormattedString // Use centralized util
+import com.example.nursecharting.ui.theme.Teal
+import com.example.nursecharting.utils.toFormattedString
 
 @Composable
 fun NursesNotesSection(
     patientId: String,
     nurseNotes: List<NurseNote>,
     onAddNote: (NurseNote) -> Unit,
-    onDeleteNote: (NurseNote) -> Unit, // Added delete callback
+    onDeleteNote: (NurseNote) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var noteText by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Section Title
         Text(
             text = "Nurse's Notes",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
         )
 
-        // Note Input Field
         OutlinedTextField(
             value = noteText,
             onValueChange = { noteText = it },
@@ -68,9 +66,9 @@ fun NursesNotesSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .heightIn(min = 120.dp), // Changed minHeight to heightIn
+                .heightIn(min = 120.dp),
             textStyle = MaterialTheme.typography.bodyLarge,
-            keyboardOptions = KeyboardOptions( // Use constructor
+            keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Default
             ),
@@ -78,7 +76,6 @@ fun NursesNotesSection(
             shape = MaterialTheme.shapes.small
         )
 
-        // Add Entry Button
         Button(
             onClick = {
                 if (noteText.isNotBlank()) {
@@ -88,7 +85,7 @@ fun NursesNotesSection(
                         noteText = noteText
                     )
                     onAddNote(newNote)
-                    noteText = "" // Clear field after adding
+                    noteText = ""
                 }
             },
             enabled = noteText.isNotBlank(),
@@ -97,24 +94,21 @@ fun NursesNotesSection(
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
                 .height(48.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Teal, // #009688
+                containerColor = Teal,
                 contentColor = Color.White,
-                disabledContainerColor = Teal.copy(alpha = 0.5f) // Indicate disabled state
+                disabledContainerColor = Teal.copy(alpha = 0.5f)
             ),
             shape = RoundedCornerShape(8.dp)
         ) {
-            // Icon removed as per request
-            // Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing)) // Spacer for icon removed
             Text(
-                text = "Add Entry", // Text changed
+                text = "Add Entry",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
             )
         }
 
-        // Display existing notes
         if (nurseNotes.isNotEmpty()) {
             Text(
-                text = "Existing Notes:", // Simple header for the list
+                text = "Existing Notes:",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
             )
@@ -122,7 +116,7 @@ fun NursesNotesSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .heightIn(max = 300.dp), // Limit height if many notes
+                    .heightIn(max = 300.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(nurseNotes, key = { it.id }) { note ->
@@ -145,7 +139,7 @@ fun NursesNotesSection(
                             }
                             IconButton(
                                 onClick = { onDeleteNote(note) },
-                                modifier = Modifier.size(40.dp) // Ensure tappable area
+                                modifier = Modifier.size(40.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Delete,

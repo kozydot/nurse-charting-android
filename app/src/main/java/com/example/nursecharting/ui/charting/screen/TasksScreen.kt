@@ -43,7 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.nursecharting.ui.charting.ChartingViewModel
 import com.example.nursecharting.ui.charting.TaskFilterStatus
 import com.example.nursecharting.ui.charting.TaskSortOption
-import android.util.Log // Added for logging
+import android.util.Log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +63,7 @@ fun TasksScreen(
     val currentPatientId by viewModel.currentPatientId.collectAsStateWithLifecycle()
     val currentSortOption by viewModel.taskSortOption.collectAsStateWithLifecycle()
     val currentFilterStatus by viewModel.taskFilterStatus.collectAsStateWithLifecycle()
-    val taskFilterOptions by viewModel.taskFilterOptions.collectAsStateWithLifecycle() // Added
+    val taskFilterOptions by viewModel.taskFilterOptions.collectAsStateWithLifecycle()
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var filterMenuExpanded by remember { mutableStateOf(false) }
@@ -73,7 +73,6 @@ fun TasksScreen(
             TopAppBar(
                 title = { Text("Tasks") },
                 actions = {
-                    // Redundant icons removed as per CRASH-TASKDROPDOWN-001
                 }
             )
         },
@@ -84,7 +83,6 @@ fun TasksScreen(
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            // Filter and Sort Controls
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -92,7 +90,6 @@ fun TasksScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Filter Dropdown
                 Box {
                     Button(onClick = { filterMenuExpanded = true }) {
                         Text(currentFilterStatus.displayName)
@@ -104,7 +101,6 @@ fun TasksScreen(
                     ) {
                         taskFilterOptions.forEach { filterOption ->
                             Log.d("TasksScreen", "Populating filter dropdown item: $filterOption, displayName: ${filterOption?.displayName ?: "NULL"}")
-                            // Ensure filterOption is not null before accessing its properties
                             if (filterOption != null) {
                                 DropdownMenuItem(
                                     text = { Text(filterOption.displayName) },
@@ -115,7 +111,6 @@ fun TasksScreen(
                                 )
                             } else {
                                 Log.e("TasksScreen", "Encountered a null filterOption in taskFilterOptions list.")
-                                // Optionally, you could render a placeholder or skip this item
                             }
                         }
                     }
@@ -123,7 +118,6 @@ fun TasksScreen(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Sort Dropdown
                 Box {
                     Button(onClick = { sortMenuExpanded = true }) {
                         Text(currentSortOption.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() })
@@ -152,7 +146,6 @@ fun TasksScreen(
                 tasks = tasks,
                 onTaskClick = { task -> viewModel.onTaskClicked(task) },
                 onToggleComplete = { task -> viewModel.toggleTaskCompleted(task) },
-                // Modifier.padding(paddingValues) is now applied to the Column
             )
         }
 

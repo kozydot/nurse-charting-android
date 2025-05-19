@@ -3,12 +3,12 @@ package com.example.nursecharting.data.repository
 import com.example.nursecharting.data.local.dao.InputOutputDao
 import com.example.nursecharting.data.local.dao.MedicationAdministeredDao
 import com.example.nursecharting.data.local.dao.NurseNoteDao
-import com.example.nursecharting.data.local.dao.TaskDao // Added import
+import com.example.nursecharting.data.local.dao.TaskDao
 import com.example.nursecharting.data.local.dao.VitalSignDao
 import com.example.nursecharting.data.local.entity.InputOutputEntry
 import com.example.nursecharting.data.local.entity.MedicationAdministered
 import com.example.nursecharting.data.local.entity.NurseNote
-import com.example.nursecharting.data.local.entity.Task // Added import
+import com.example.nursecharting.data.local.entity.Task
 import com.example.nursecharting.data.local.entity.VitalSign
 import com.example.nursecharting.domain.repository.ChartingRepository
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +19,7 @@ class ChartingRepositoryImpl @Inject constructor(
     private val medicationAdministeredDao: MedicationAdministeredDao,
     private val nurseNoteDao: NurseNoteDao,
     private val inputOutputDao: InputOutputDao,
-    private val taskDao: TaskDao // Added TaskDao to constructor
+    private val taskDao: TaskDao
 ) : ChartingRepository {
 
     override suspend fun insertVitalSign(vitalSign: VitalSign): Long {
@@ -70,7 +70,6 @@ class ChartingRepositoryImpl @Inject constructor(
         inputOutputDao.deleteInputOutputEntry(entry)
     }
 
-    // Task Methods
     override fun getTasksForPatient(patientId: String): Flow<List<Task>> {
         return taskDao.getTasksForPatient(patientId)
     }

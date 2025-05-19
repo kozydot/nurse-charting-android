@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer // Added from mandatory list
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -24,16 +24,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-// Add missing from mandatory list
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect // Added from mandatory list
-import androidx.compose.runtime.collectAsState // Added from mandatory list
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf // Added from mandatory list
-import androidx.compose.runtime.remember // Added from mandatory list
-import androidx.compose.runtime.setValue // Added from mandatory list
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -42,7 +41,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.nursecharting.data.local.entity.Patient
 import com.example.nursecharting.ui.navigation.Screen
-// import com.example.nursecharting.ui.patient.PatientListViewModel // Implicitly imported
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,14 +69,14 @@ fun PatientListScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(patients, key = { patient -> patient.patientId }) { patient -> // Changed to patientId
+            items(patients, key = { patient -> patient.patientId }) { patient ->
                 PatientListItem(
                     patient = patient,
                     onItemClick = {
                         navController.navigate(Screen.PatientChartingHostScreen.createRoute(patient.patientId))
                     },
                     onDeleteClick = {
-                        viewModel.deletePatient(patient) // Assuming a delete function in ViewModel
+                        viewModel.deletePatient(patient)
                     }
                 )
             }

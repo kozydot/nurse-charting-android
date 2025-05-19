@@ -28,7 +28,7 @@ sealed class TaskFilterStatus(val displayName: String) {
 
     companion object {
         val allOptions: List<TaskFilterStatus> = buildList {
-            add(ALL) // Explicitly add the non-null object ALL
+            add(ALL)
             TaskStatusValue.entries.forEach { statusValue ->
                 add(Specific(statusValue))
             }

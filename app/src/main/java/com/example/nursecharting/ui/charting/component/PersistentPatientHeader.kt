@@ -29,11 +29,11 @@ import com.example.nursecharting.data.local.entity.Patient
 fun PersistentPatientHeader(
     patient: Patient?,
     modifier: Modifier = Modifier,
-    onEditClick: () -> Unit // Callback for edit action
+    onEditClick: () -> Unit
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = 4.dp // Add some elevation to distinguish it
+        shadowElevation = 4.dp
     ) {
         if (patient != null) {
             BoxWithConstraints {
@@ -44,12 +44,11 @@ fun PersistentPatientHeader(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp), // Adjusted padding slightly for balance
-                        verticalAlignment = Alignment.CenterVertically // Align all items in the row vertically
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Primary Patient Information
                         Column(
-                            modifier = Modifier.weight(1f), // Takes up available space
+                            modifier = Modifier.weight(1f),
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
@@ -59,7 +58,7 @@ fun PersistentPatientHeader(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
-                            Spacer(modifier = Modifier.height(2.dp)) // Reduced spacer
+                            Spacer(modifier = Modifier.height(2.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
                                     text = "DOB: ${patient.dateOfBirth}",
@@ -69,17 +68,13 @@ fun PersistentPatientHeader(
                                 )
                                 Text(
                                     text = "ID: ${patient.patientId}", // MRN is usually patientId
-                                    style = MaterialTheme.typography.bodyMedium, // Consistent style
+                                    style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 // Age/Gender can be added here if available in Patient model and needed
                             }
                         }
-
-                        // Spacer to ensure secondary info is pushed to the right,
-                        // but primary info already has weight(1f)
-                        // Spacer(modifier = Modifier.width(16.dp)) // Optional: add some space before secondary info
 
                         // Secondary Information Block (Room + Edit icon)
                         Row(
@@ -88,7 +83,7 @@ fun PersistentPatientHeader(
                         ) {
                             Text(
                                 text = "Room: ${patient.roomNumber}",
-                                style = MaterialTheme.typography.bodyMedium, // Consistent style
+                                style = MaterialTheme.typography.bodyMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -100,7 +95,7 @@ fun PersistentPatientHeader(
                                 Icon(
                                     imageVector = Icons.Filled.Edit,
                                     contentDescription = "Edit Patient Room Information",
-                                    tint = MaterialTheme.colorScheme.primary // Optional: theme color
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -112,7 +107,6 @@ fun PersistentPatientHeader(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 12.dp)
                     ) {
-                        // Primary Patient Information
                         Column(horizontalAlignment = Alignment.Start) {
                             Text(
                                 text = patient.fullName,
@@ -139,13 +133,12 @@ fun PersistentPatientHeader(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(4.dp)) // Space between primary and secondary info
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                        // Secondary Information Block (Room + Edit icon) - Aligned to the start
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start // Align to the start of the row
+                            horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
                                 text = "Room: ${patient.roomNumber}",

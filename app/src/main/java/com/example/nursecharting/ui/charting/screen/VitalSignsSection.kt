@@ -29,12 +29,12 @@ import androidx.compose.ui.unit.dp
 import com.example.nursecharting.data.local.entity.VitalSign
 import com.example.nursecharting.ui.theme.DarkGrey
 import com.example.nursecharting.ui.theme.PrimaryBlue
-import com.example.nursecharting.utils.toFormattedString // Corrected import
+import com.example.nursecharting.utils.toFormattedString
 
 @Composable
 fun VitalSignsSection(
     vitalSigns: List<VitalSign>,
-    onDeleteVitalSign: (VitalSign) -> Unit, // Added delete callback
+    onDeleteVitalSign: (VitalSign) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -43,7 +43,7 @@ fun VitalSignsSection(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
-            text = "Vital Signs History", // Changed title
+            text = "Vital Signs History",
             style = MaterialTheme.typography.titleLarge,
             color = PrimaryBlue,
             modifier = Modifier.padding(bottom = 12.dp)
@@ -63,7 +63,7 @@ fun VitalSignsSection(
                 items(vitalSigns.sortedByDescending { it.timestamp }, key = { it.id }) { vitalSignEntry ->
                     VitalSignHistoryCard(
                         vitalSignEntry = vitalSignEntry,
-                        onDelete = { onDeleteVitalSign(vitalSignEntry) } // Pass delete action
+                        onDelete = { onDeleteVitalSign(vitalSignEntry) }
                     )
                 }
             }
@@ -74,7 +74,7 @@ fun VitalSignsSection(
 @Composable
 fun VitalSignHistoryCard(
     vitalSignEntry: VitalSign,
-    onDelete: () -> Unit // Callback for delete action
+    onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -88,7 +88,7 @@ fun VitalSignHistoryCard(
             ) {
                 Text(
                     text = "Recorded: ${vitalSignEntry.timestamp.toFormattedString()}",
-                    style = MaterialTheme.typography.labelSmall, // Corrected: caption -> labelSmall
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 IconButton(onClick = onDelete) {
@@ -101,27 +101,24 @@ fun VitalSignHistoryCard(
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Row for the two columns of vital signs
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top // As per Artisan's proposal
+                verticalAlignment = Alignment.Top
             ) {
-                // Column 1: BP, RR, SpO2
                 Column(
-                    horizontalAlignment = Alignment.Start // As per Artisan's proposal
+                    horizontalAlignment = Alignment.Start
                 ) {
                     VitalSignItem("BP", "${vitalSignEntry.systolicBP}/${vitalSignEntry.diastolicBP} mmHg")
-                    Spacer(modifier = Modifier.height(8.dp)) // Space between vital sign entries
+                    Spacer(modifier = Modifier.height(8.dp))
                     VitalSignItem("RR", "${vitalSignEntry.respiratoryRate} breaths/min")
                     Spacer(modifier = Modifier.height(8.dp))
                     VitalSignItem("SpO2", "${vitalSignEntry.spO2}%")
                 }
 
-                Spacer(modifier = Modifier.width(16.dp)) // Space between the two columns
+                Spacer(modifier = Modifier.width(16.dp))
 
-                // Column 2: HR, Temp, Pain
                 Column(
-                    horizontalAlignment = Alignment.Start // As per Artisan's proposal
+                    horizontalAlignment = Alignment.Start
                 ) {
                     VitalSignItem("HR", "${vitalSignEntry.heartRate} bpm")
                     Spacer(modifier = Modifier.height(8.dp))
@@ -129,24 +126,23 @@ fun VitalSignHistoryCard(
                     Spacer(modifier = Modifier.height(8.dp))
                     vitalSignEntry.painScore?.takeIf { it.isNotBlank() }?.let {
                         VitalSignItem("Pain", it)
-                    } ?: VitalSignItem("Pain", "N/A") // Show N/A if pain score is null or blank
+                    } ?: VitalSignItem("Pain", "N/A")
                 }
             }
         }
     }
 }
 
-// Helper composable for individual vital sign item as per Artisan's proposal
 @Composable
 fun VitalSignItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.Start) { // Ensures text inside is left-aligned
+    Column(horizontalAlignment = Alignment.Start) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall // Corrected: overline -> labelSmall
+            style = MaterialTheme.typography.labelSmall
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge   // Corrected: body1 -> bodyLarge
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }

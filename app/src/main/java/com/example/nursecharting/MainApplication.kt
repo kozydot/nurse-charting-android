@@ -31,16 +31,12 @@ class MainApplication : Application(), Configuration.Provider {
     }
 
     private fun createNotificationChannels() {
-        // Create channel for Task Reminders
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Task Reminders"
             val descriptionText = "Notifications for upcoming tasks"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(TaskReminderWorker.CHANNEL_ID, name, importance).apply {
                 description = descriptionText
-                // enableLights(true)
-                // lightColor = Color.RED
-                // enableVibration(true)
             }
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

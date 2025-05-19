@@ -3,7 +3,7 @@ package com.example.nursecharting.ui.charting.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row // Added this import
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,7 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.nursecharting.ui.charting.ChartingViewModel
-// import com.example.nursecharting.ui.navigation.Screen // No longer navigating to AddMedicationScreen
 import com.example.nursecharting.utils.toFormattedString
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,13 +40,11 @@ import java.util.Locale
 
 @Composable
 fun MedicationsScreen(
-    // navController: NavController, // Removed as it's unused
-    patientId: String, // patientId is passed to this screen
+    patientId: String,
     viewModel: ChartingViewModel = hiltViewModel()
 ) {
     Log.d("MedicationsScreen", "Composing MedicationsScreen for patientId (prop): $patientId. ViewModel instance: $viewModel, ViewModel patientId (from VM getter): ${viewModel.viewModelPatientIdForLogging}")
 
-    // Call loadDataForPatient when patientId prop changes or ViewModel is first created for this screen
     LaunchedEffect(patientId, viewModel) {
         Log.d("MedicationsScreen", "LaunchedEffect: Calling viewModel.loadDataForPatient with patientId (prop): $patientId")
         viewModel.loadDataForPatient(patientId)
@@ -93,11 +90,11 @@ fun MedicationsScreen(
             LazyColumn(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .padding(16.dp) // Content padding
+                    .padding(16.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(medications, key = { it.id }) { med -> // Assuming MedicationAdministered has an 'id' field
+                items(medications, key = { it.id }) { med ->
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp),
@@ -124,5 +121,3 @@ fun MedicationsScreen(
         }
     }
 }
-
-// Removed local toFormattedString, now using from com.example.nursecharting.utils

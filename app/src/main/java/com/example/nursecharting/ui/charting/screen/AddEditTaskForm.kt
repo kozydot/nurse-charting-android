@@ -1,6 +1,6 @@
 package com.example.nursecharting.ui.charting.screen
 
-import android.util.Log // Import Log
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,8 +8,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.DateRange // For DatePicker icon
-import androidx.compose.material.icons.filled.Schedule // For TimePicker icon
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -22,7 +22,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults // Import for colors
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -35,15 +35,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.nursecharting.data.local.entity.Task
-import com.example.nursecharting.utils.DateTimeUtils // Import the updated utility
-import java.util.* // Keep Calendar import
-// Remove java.text.SimpleDateFormat as it's no longer used locally for formatting display strings
+import com.example.nursecharting.utils.DateTimeUtils
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTaskFormDialog(
     taskToEdit: Task?,
-    patientId: String, // New parameter
+    patientId: String,
     onSaveTask: (Task) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -59,11 +58,9 @@ fun AddEditTaskFormDialog(
     val priorities = listOf("High", "Medium", "Low")
     val statuses = listOf("Pending", "In Progress", "Completed", "Cancelled")
 
-    // For Dropdowns
     var priorityExpanded by remember { mutableStateOf(false) }
     var statusExpanded by remember { mutableStateOf(false) }
 
-    // State for Material 3 Date and Time Pickers
     var showDueDatePickerDialog by remember { mutableStateOf(false) }
     val dueDatePickerState = rememberDatePickerState(initialSelectedDateMillis = dueDateTimeState)
     var showDueTimePickerDialog by remember { mutableStateOf(false) }
@@ -72,7 +69,7 @@ fun AddEditTaskFormDialog(
         initialMinute = dueDateTimeState?.let { Calendar.getInstance().apply { timeInMillis = it }.get(Calendar.MINUTE) } ?: Calendar.getInstance().get(Calendar.MINUTE),
         is24Hour = false // Or determine from system settings
     )
-    var tempDueDateMillis by remember { mutableStateOf<Long?>(null) } // For combining date and time
+    var tempDueDateMillis by remember { mutableStateOf<Long?>(null) }
 
     var showReminderDatePickerDialog by remember { mutableStateOf(false) }
     val reminderDatePickerState = rememberDatePickerState(initialSelectedDateMillis = reminderDateTimeState)
@@ -85,7 +82,6 @@ fun AddEditTaskFormDialog(
     var tempReminderDateMillis by remember { mutableStateOf<Long?>(null) }
 
 
-    // Local dateFormat and timeFormat removed, will use DateTimeUtils
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -97,7 +93,7 @@ fun AddEditTaskFormDialog(
             Column(
                 modifier = Modifier
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState()), // Added for scrollability
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
@@ -288,15 +284,14 @@ fun AddEditTaskFormDialog(
         }
     }
 
-    // Due Date Picker Dialog
     if (showDueDatePickerDialog) {
         DatePickerDialog(
             onDismissRequest = { showDueDatePickerDialog = false },
             confirmButton = {
                 TextButton(onClick = {
                     dueDatePickerState.selectedDateMillis?.let {
-                        tempDueDateMillis = it // Store selected date temporarily
-                        showDueTimePickerDialog = true // Show time picker next
+                        tempDueDateMillis = it
+                        showDueTimePickerDialog = true
                     }
                     showDueDatePickerDialog = false
                 }) { Text("OK") }
@@ -309,7 +304,6 @@ fun AddEditTaskFormDialog(
         }
     }
 
-    // Due Time Picker Dialog
     if (showDueTimePickerDialog) {
         AlertDialog(
             onDismissRequest = { showDueTimePickerDialog = false },
@@ -321,15 +315,15 @@ fun AddEditTaskFormDialog(
                 TextButton(onClick = {
                     tempDueDateMillis?.let { dateMillis ->
                         val cal = Calendar.getInstance()
-                        cal.timeInMillis = dateMillis // Start with the selected date
+                        cal.timeInMillis = dateMillis
                         cal.set(Calendar.HOUR_OF_DAY, dueTimePickerState.hour)
                         cal.set(Calendar.MINUTE, dueTimePickerState.minute)
                         cal.set(Calendar.SECOND, 0)
                         cal.set(Calendar.MILLISECOND, 0)
-                        dueDateTimeState = cal.timeInMillis // Set the combined state
+                        dueDateTimeState = cal.timeInMillis
                     }
                     showDueTimePickerDialog = false
-                    tempDueDateMillis = null // Clear temporary date
+                    tempDueDateMillis = null
                 }) { Text("OK") }
             },
             dismissButton = {
@@ -338,7 +332,6 @@ fun AddEditTaskFormDialog(
         )
     }
 
-    // Reminder Date Picker Dialog
     if (showReminderDatePickerDialog) {
         DatePickerDialog(
             onDismissRequest = { showReminderDatePickerDialog = false },
@@ -346,7 +339,7 @@ fun AddEditTaskFormDialog(
                 TextButton(onClick = {
                     reminderDatePickerState.selectedDateMillis?.let {
                         tempReminderDateMillis = it
-                        showReminderTimePickerDialog = true // Show time picker next
+                        showReminderTimePickerDialog = true
                     }
                     showReminderDatePickerDialog = false
                 }) { Text("OK") }
@@ -359,7 +352,6 @@ fun AddEditTaskFormDialog(
         }
     }
 
-    // Reminder Time Picker Dialog
     if (showReminderTimePickerDialog) {
         AlertDialog(
             onDismissRequest = { showReminderTimePickerDialog = false },

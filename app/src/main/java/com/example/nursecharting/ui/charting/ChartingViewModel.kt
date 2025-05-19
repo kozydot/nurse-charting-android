@@ -28,7 +28,7 @@ import com.example.nursecharting.ui.charting.TaskFilterStatus
 @HiltViewModel
 class ChartingViewModel @Inject constructor(
     private val chartingRepository: ChartingRepository,
-    private val application: Application // Inject Application context
+    private val application: Application
 ) : ViewModel() {
 
     private val workManager = WorkManager.getInstance(application)
@@ -110,7 +110,6 @@ class ChartingViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // StateFlows for sort and filter criteria
     private val _taskSortOption = MutableStateFlow(TaskSortOption.BY_DUE_DATE_ASC)
     val taskSortOption: StateFlow<TaskSortOption> = _taskSortOption.asStateFlow()
 
@@ -316,7 +315,6 @@ class ChartingViewModel @Inject constructor(
         }
     }
 
-    // Helper function to map priority strings to integers for sorting
     private fun mapPriorityToInt(priority: String): Int {
         return when (priority.lowercase()) {
             "high" -> 0
@@ -326,7 +324,6 @@ class ChartingViewModel @Inject constructor(
         }
     }
 
-    // Event Handlers for Sort and Filter
     fun setTaskSortOption(sortOption: TaskSortOption) {
         Log.d("ChartingViewModel", "Setting task sort option to: $sortOption")
         _taskSortOption.value = sortOption
@@ -337,7 +334,6 @@ class ChartingViewModel @Inject constructor(
         _taskFilterStatus.value = filterStatus
     }
 
-    // Task Event Handlers
     fun onAddTaskClicked() {
         _selectedTask.value = null
         _showTaskDialog.value = true
@@ -394,10 +390,10 @@ class ChartingViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val savedTask: Task
-                if (task.id == 0L) { // New task
+                if (task.id == 0L) {
                     val newTaskId = chartingRepository.insertTask(task)
-                    savedTask = task.copy(id = newTaskId) // Get the task with the generated ID
-                } else { // Existing task
+                    savedTask = task.copy(id = newTaskId)
+                } else {
                     chartingRepository.updateTask(task)
                     savedTask = task
                 }

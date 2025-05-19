@@ -24,12 +24,11 @@ import com.example.nursecharting.ui.navigation.Screen
 @Composable
 fun VitalsScreen(
     navController: NavController,
-    patientId: String, // patientId is passed to this screen
+    patientId: String,
     viewModel: ChartingViewModel = hiltViewModel()
 ) {
     Log.d("VitalsScreen", "Composing VitalsScreen for patientId (prop): $patientId. ViewModel instance: $viewModel, ViewModel patientId (from VM getter): ${viewModel.viewModelPatientIdForLogging}")
 
-    // Call loadDataForPatient when patientId prop changes or ViewModel is first created for this screen
     LaunchedEffect(patientId, viewModel) {
         Log.d("VitalsScreen", "LaunchedEffect: Calling viewModel.loadDataForPatient with patientId (prop): $patientId")
         viewModel.loadDataForPatient(patientId)
@@ -63,14 +62,11 @@ fun VitalsScreen(
                 Text("No vital signs recorded for this patient.")
             }
         } else {
-            // VitalSignsSection is designed to be a self-contained section with its own padding.
-            // It will be placed inside the Scaffold's content area.
-            Box(modifier = Modifier.padding(paddingValues)) { // Apply scaffold padding
+            Box(modifier = Modifier.padding(paddingValues)) {
                 VitalSignsSection(
                     vitalSigns = vitalSigns,
                     onDeleteVitalSign = { vitalSign ->
                         viewModel.deleteVitalSign(vitalSign)
-                        // Optionally, show a snackbar or confirmation for delete
                     }
                 )
             }

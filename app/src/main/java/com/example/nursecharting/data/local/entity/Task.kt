@@ -42,11 +42,11 @@ data class Task(
     val notes: String?,
 
     @ColumnInfo(name = "created_at")
-    val createdAt: Long, // Timestamp, non-null
+    val createdAt: Long,
 
     @ColumnInfo(name = "completed_at")
-    val completedAt: Long?, // Nullable timestamp
+    val completedAt: Long?,
 
     @ColumnInfo(name = "reminder_date_time")
-    val reminderDateTime: Long? // Nullable timestamp for notification
+    val reminderDateTime: Long? // For notification scheduling
 )

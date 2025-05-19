@@ -16,19 +16,14 @@ import javax.inject.Inject
 @HiltViewModel
 class PatientDetailViewModel @Inject constructor(
     private val patientRepository: PatientRepository,
-    savedStateHandle: SavedStateHandle // Removed private val as it's used only in init
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    // Holds the ID of the patient being viewed/edited. Comes from navigation args.
     private val _currentPatientIdFromNav = MutableStateFlow(savedStateHandle.get<String>("patientId"))
-    // val currentPatientIdFromNav: StateFlow<String?> = _currentPatientIdFromNav.asStateFlow() // Expose if needed elsewhere
 
-    // Holds the full Patient object, fetched from the repository
     private val _patient = MutableStateFlow<Patient?>(null)
     val patient: StateFlow<Patient?> = _patient.asStateFlow()
 
-    // These StateFlows are for binding to UI input fields.
-    // They are initialized from _patient when it's loaded, or are empty for a new patient.
     private val _uiFullName = MutableStateFlow("")
     val uiFullName: StateFlow<String> = _uiFullName.asStateFlow()
 
@@ -38,27 +33,18 @@ class PatientDetailViewModel @Inject constructor(
     private val _uiRoomNumber = MutableStateFlow("")
     val uiRoomNumber: StateFlow<String> = _uiRoomNumber.asStateFlow()
 
-    // This would be for a user-editable Patient ID field if creating a NEW patient
-    // and the ID isn't auto-generated or pre-assigned.
-    // For now, we'll generate a UUID for new patients if _currentPatientIdFromNav is null.
     private val _uiPatientIdInput = MutableStateFlow("")
     val uiPatientIdInput: StateFlow<String> = _uiPatientIdInput.asStateFlow()
 
 
-    // For UI state, e.g., to navigate back after save or show error
     private val _saveState = MutableStateFlow<SaveResult?>(null)
     val saveState: StateFlow<SaveResult?> = _saveState.asStateFlow()
 
     init {
         _currentPatientIdFromNav.value?.let { id ->
-            // Ensure "null" string from nav args isn't treated as a valid ID
             if (id.isNotEmpty() && id.lowercase() != "null") {
                 loadPatient(id)
             } else {
-                // This means we are adding a new patient, patientId from nav was null or "null"
-                // Initialize UI fields as empty or with defaults for a new patient.
-                // If patient ID needs to be input for new patient:
-                // _uiPatientIdInput.value = "" // Or some default
                 _uiFullName.value = ""
                 _uiDob.value = ""
                 _uiRoomNumber.value = ""
@@ -66,15 +52,12 @@ class PatientDetailViewModel @Inject constructor(
         }
     }
 
-    // Public function to load patient details if ID is known
     fun loadPatient(patientId: String) {
         viewModelScope.launch {
-            // Assuming patientRepository.getPatient expects a String ID
             val fetchedPatient = patientRepository.getPatient(patientId).firstOrNull()
             _patient.value = fetchedPatient
             fetchedPatient?.let {
-                // Populate UI fields from the fetched patient
-                _uiPatientIdInput.value = it.patientId // If displaying existing ID
+                _uiPatientIdInput.value = it.patientId
                 _uiFullName.value = it.fullName
                 _uiDob.value = it.dateOfBirth
                 _uiRoomNumber.value = it.roomNumber
@@ -82,7 +65,6 @@ class PatientDetailViewModel @Inject constructor(
         }
     }
 
-    // Functions to update UI-bound StateFlows from user input
     fun updateUiFullName(name: String) {
         _uiFullName.value = name
     }
@@ -95,7 +77,7 @@ class PatientDetailViewModel @Inject constructor(
         _uiRoomNumber.value = room
     }
 
-    fun updateUiPatientIdInput(id: String) { // If patient ID is an input field for new patients
+    fun updateUiPatientIdInput(id: String) {
         _uiPatientIdInput.value = id
     }
 
@@ -115,7 +97,6 @@ class PatientDetailViewModel @Inject constructor(
             try {
                 val patientToSave: Patient
                 if (existingPatientId != null) {
-                    // Editing existing patient
                     patientToSave = Patient(
                         patientId = existingPatientId,
                         fullName = name,
@@ -124,13 +105,10 @@ class PatientDetailViewModel @Inject constructor(
                     )
                     patientRepository.updatePatient(patientToSave)
                 } else {
-                    // Adding new patient
-                    // Use _uiPatientIdInput if it's an editable field for new patient ID,
-                    // otherwise generate one.
                     val newPatientId = _uiPatientIdInput.value.takeIf { it.isNotBlank() }
                         ?: java.util.UUID.randomUUID().toString()
 
-                    if (newPatientId.isBlank()){ // Should not happen if UUID is fallback
+                    if (newPatientId.isBlank()){
                          _saveState.value = SaveResult.Failure("Patient ID is required for new patient.")
                         return@launch
                     }

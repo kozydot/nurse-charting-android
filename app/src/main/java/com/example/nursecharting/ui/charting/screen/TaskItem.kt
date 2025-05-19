@@ -44,16 +44,13 @@ fun TaskItem(
             val dueCalendar = Calendar.getInstance().apply {
                 timeInMillis = task.dueDateTime
             }
-            // If dueDateTime only contains date (time is 00:00:00),
-            // we might want to consider it overdue if the current time is past that day.
-            // For simplicity here, direct comparison. If specific end-of-day logic is needed, adjust.
             dueCalendar.before(Calendar.getInstance())
         }
     }
 
     val priorityColor = when (task.priority.lowercase()) {
         "high" -> Color.Red.copy(alpha = 0.7f)
-        "medium" -> Color.Yellow.copy(alpha = 0.7f) // Consider a darker yellow for better visibility
+        "medium" -> Color.Yellow.copy(alpha = 0.7f)
         "low" -> Color.Green.copy(alpha = 0.7f)
         else -> MaterialTheme.colorScheme.surfaceVariant
     }
@@ -81,7 +78,7 @@ fun TaskItem(
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .height(50.dp) // Adjust height as needed
+                    .height(50.dp)
                     .background(priorityColor)
             )
             Spacer(modifier = Modifier.width(12.dp))
